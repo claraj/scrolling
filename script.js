@@ -10,12 +10,12 @@ $(function() {
   var subcat_scroller  = $('#scroll_sub');
 
   var once = 2601;
-  var index = 0
+  var index = 0;
   var subcat_index = 0;
 
   function cancel() {
-    console.log('cancelling')
-    clearInterval(looper);
+    console.log('cancelling');
+    clearInterval(rollup);
   }
 
   rollup();
@@ -26,12 +26,8 @@ $(function() {
     main_scroller.text(data[index]);
     main_scroller.css('top', ""); //reset to original position
 
-    animate(main_scroller);
-
-    index++; // This happens as the animation is running
-    if (index == data.length) {
-      index = 0;
-    }
+    console.log(main_scroller);
+    animate_main();
 
     var subcats = subcat[data[index]];
     var subcat_count = 1;
@@ -39,40 +35,54 @@ $(function() {
       subcat_count = subcats.length;
     }
     var delay = once * subcat_count;
-    console.log('delay ' + delay)
+    console.log('delay ' + delay);
 
+    //index++; // This happens as the animation is running
+    //put back if want loop to repeat
+    //if (index == data.length) {
+    //  index = 0;
+    //}
+
+
+    if (index == data.length) {
+      cancel();
+    } else {
     setTimeout(rollup, delay); //in this many ms, run this function again.
+    }
   }
 
   //scroll up into view then check for subcats
-  function animate(scroller) {
-    scroller.animate({
-      "top": "-=75px"
-    }, 800, subcats_here(scroller));
-  }
+  function animate_main() {
 
-  var subcat_index = 0;
+    console.log("animating " + data[index]);
+    main_scroller.animate({
+      "top": "-=75px"
+    }, 800, subcats_here());
+  }
 
   // Display subcats?
 
-  function subcats_here(main_scroller) {
+  function subcats_here() {
 
-    subcat_scroller.css("top", "");
+    console.log("rolling subcats, for main " + data[index] + " subcat_index " + subcat_index);
 
-    console.log(main_scroller);
+    subcat_scroller.css("top", "");  //reset
     console.log('subcats');
-    subcats = subcat[data[index]];
+    var subcats = subcat[data[index]];
 
     console.log(subcats) ;
 
     if (subcats != undefined) {
+
       // roll subcats, then proceed with main roll
 
-      console.log("after cond " + subcats) ;
+      //console.log("after cond " + subcats) ;
 
-      var scroll_sub = $('#scroll_sub');
-      scroll_sub.text(subcats[subcat_index]);
-      scroll_sub.animate({
+      subcat_scroller.css("top", "");
+
+      subcat_scroller.text(subcats[subcat_index]);
+
+      subcat_scroller.animate({
           "top": "-=75px"
         }, 800)
         .animate({
@@ -81,12 +91,10 @@ $(function() {
         .animate({
           "top": "-=75px"
         }, 800, function() {
-          console.log('animation done callback');
+          console.log('subcat animation done callback for subcat in ' +subcats + " "  + subcat_index);
           main_scroller.css('visibility', 'hidden').css('top', '').css('visibility', 'visible');
 
           subcat_index++;
-
-          console.log(subcats)
 
           if (subcat_index == subcats.length) {
             subcat_index = 0;
@@ -94,8 +102,9 @@ $(function() {
             finish_main_roll()
 
           } else {
-            console.log('more subcats to roll')
-            setTimeout(subcats_here, once);
+            console.log('more subcats to roll');
+            //setTimeout(subcats_here, once);
+            subcats_here();
           }
 
         });
@@ -116,6 +125,7 @@ $(function() {
       }, 800, function() {
         console.log('animation done callback');
         main_scroller.css('visibility', 'hidden').css('top', '').css('visibility', 'visible');
+        index++;
       });
 
 
