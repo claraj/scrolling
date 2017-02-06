@@ -1,3 +1,3 @@
 # minneapolis-edu.github.io
 
-Just enough JQuery to get things scrolling. Completely untested in every browser except recent Chrome.
+Scrolling things with JQuery. There's probably a much nicer way to do this. Completely untested in every browser except recent Chrome.
