@@ -1,3 +1,3 @@
 # minneapolis-edu.github.io
 
-Readme
+Just enough JQuery to get things scrolling. Completely untested in every browser except recent Chrome.
