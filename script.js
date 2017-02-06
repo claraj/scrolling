@@ -1,22 +1,20 @@
-/*
-TODO why does code to test for no sub-cats cause incorrect scrolling?
- */
-
-
 
 $(function() {
 
-  var data = ['AAA', 'BBB', 'CCC', 'DDD', 'EEE'];
+  var data = ['Java', 'Python', 'Android', 'JavaScript'];
   var subcat = {
-    'AAA': ['a1', 'a2', 'a3'],
-    'BBB' : [''],
-    'CCC': ['c1', 'c2'],
-    'DDD' : ['d1', 'd2'],
-    'EEE' : ['']
+    'Java': [''],
+    'Android' : [''],
+    'Python' : ['Flask', 'Django'],
+    'JavaScript': ['Node', 'JQuery']
+    // Provide list with blank string for items with no sub-categories
   };
 
   var scroll_time = 800;
   var pause_time = 1500;
+
+  var scroll_from_base = "-=65px";
+  var scroll_to_top = "-=60px";
 
   var main_scroller = $('#scroll');
   var subcat_scroller = $('#scroll_sub');
@@ -26,98 +24,89 @@ $(function() {
 
   roll_main();
 
-  function roll_main() { //rolls up a main category.
+  function roll_main() { //rolls up a main category item.
 
+    main_scroller.css('top', ""); //start (or reset) at base position
     main_scroller.text(data[index]);
-    main_scroller.css('top', ""); //reset to original position
 
-    console.log("animating " + data[index]);
     main_scroller.animate({
-      "top": "-=75px"
-    }, scroll_time, roll_subcats());
-  }
+      "top": scroll_from_base
+    }, scroll_time, roll_subcats());   //Scroll up, then check for subcats
 
+  }
 
   var ended_subcats = false;
 
   function roll_subcats() {
 
-    console.log("rolling subcats, for main " + data[index] + " subcat_index " + subcat_index);
-
     subcat_scroller.css("top", "");
 
     var subcats = subcat[data[index]];
 
-    if (subcats != undefined) {
+    // roll subcats. Once all rolled, continue main roll, in sync with last rolling up.
+    subcat_scroller.css("top", "");    //reset to bottom
+    subcat_scroller.text(subcats[subcat_index]);   //set text
+    subcat_index++;
 
-      // roll subcats. Once all rolled, continue main roll, in sync with last rolling up.
-      subcat_scroller.css("top", "");    //reset to bottom
-      subcat_scroller.text(subcats[subcat_index]);   //set text
-      subcat_index++;
+    subcat_scroller.animate({
+        "top": scroll_from_base
+      }, scroll_time , function() {
+        if (subcat_index == subcats.length) {   //Last subcat. Tell main to finish roll in sync with this.
+          subcat_index = 0;
+          ended_subcats = true;
+          finish_main_roll()
+        }
+      })
+      .animate({
+        "top": "+=0"    //hold in place
+      }, pause_time)
+      .animate({
+        "top": scroll_to_top
+      }, scroll_time, function () {
 
-      subcat_scroller.animate({
-          "top": "-=75px"
-        }, scroll_time , function() {
+        subcat_scroller.css("top", "");    //reset to bottom
 
-          if (subcat_index == subcats.length) {   //Last subcat. Tell main to finish roll in sync with this.
-            subcat_index = 0;
-            ended_subcats = true;
-            console.log('end of subcats index is ' + subcat_index);
-            //subcat_scroller.("top", "");
-            finish_main_roll()
-          }
-        })
-        .animate({
-          "top": "+=0"    //hold in place
-        }, pause_time)
-        .animate({
-          "top": "-=65px"
-        }, scroll_time, function () {
+        if (ended_subcats) {
+          ended_subcats = false;           //don't roll more
+          main_scroller.css("top", "");    //reset to bottom
 
-          subcat_scroller.css("top", "");    //reset to bottom
+        } else {
+          roll_subcats();      // keep rolling subcats
+        }
 
-          console.log('subcat animation done callback for subcat in ' + subcats + " subcat index " + subcat_index);
-          //subcat_scroller.css('visibility', 'hidden').css('top', '').css('visibility', 'visible');
-
-          if (ended_subcats) {
-            ended_subcats = false;   //don't roll more
-            main_scroller.css("top", "");    //reset to bottom
-
-          } else {//if (subcat_index < subcats.length) {
-            console.log('more subcats to roll, subcat index is ' + subcat_index);
-            roll_subcats();
-          }
-
-        });
-
-    } else {
-      console.log('No subcats to roll for ' + data[index]);
-      finish_main_roll();
-    }
+      });
   }
 
 
   function finish_main_roll() {
 
     //Main scroller should be showing an item. Roll it off top of screen
-    console.log('Finish main roll for ' + data[index]);
+
     main_scroller.animate({
-        fontSize: "+=0"
+        top: "+=0"
       }, pause_time)
       .animate({
-        "top": "-=50px"
+        "top": scroll_to_top
       }, scroll_time, function () {
-        console.log('main roll animation done callback, ' + data[index] + ' resetting to bottom');
         main_scroller.css('top', '');
-
         index++;
-        console.log('finish main roll callback; Index is now ' + index)
-
         if (index < data.length) {
-        roll_main();
+          roll_main();
+        } else {
+          // Done. Pause then call done to display final message.
+          setTimeout(done, 1000);
         }
 
       });
+  }
+
+
+  function done() {
+    main_scroller.css('top', '');  //reset
+    main_scroller.text('some other programming stuff');    // scroll in last line
+    main_scroller.animate({
+      top: scroll_from_base
+    }, pause_time);
   }
 
 });

@@ -9,7 +9,6 @@ body {
 span {
     color: white;
     position: absolute;
-    /*padding: 15px;*/
     z-index: 1;
     margin-left: 40px;
     top: 330px;
@@ -18,13 +17,13 @@ span {
 
 #scroll_sub {
     background: black;
-    /*background: greenyellow;*/
     left: 350px;
 }
 
 #scroll_container {
     height: 200px;
-    border: 1px gray solid;
+    border-top: 1px gray solid;
+    border-bottom: 1px gray solid;
     background: black;
 }
 
@@ -46,4 +45,8 @@ span {
     margin-top: 40px;
     font-size: 14px;
     font-style: italic;
+}
+
+a {
+    color: whitesmoke;
 }
