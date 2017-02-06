@@ -6,8 +6,11 @@ $(function() {
     'CCC': ['c1', 'c2']
   };
 
+  var scroll_time = 800;
+  var pause_time = 1000;
+
   var main_scroller = $('#scroll');
-  var subcat_scroller  = $('#scroll_sub');
+  var subcat_scroller = $('#scroll_sub');
 
   var once = 2601;
   var index = 0;
@@ -24,7 +27,7 @@ $(function() {
 
     console.log('interval ' + index)
     main_scroller.text(data[index]);
-    main_scroller.css('top', ""); //reset to original position
+    //main_scroller.css('top', ""); //reset to original position
 
     console.log(main_scroller);
     animate_main();
@@ -44,11 +47,11 @@ $(function() {
     //}
 
 
-    if (index == data.length) {
-      cancel();
-    } else {
-    setTimeout(rollup, delay); //in this many ms, run this function again.
-    }
+    //if (index == data.length) {
+    //  cancel();
+    //} else {
+    // // setTimeout(rollup, delay); //in this many ms, run this function again.
+    //}
   }
 
   //scroll up into view then check for subcats
@@ -57,7 +60,7 @@ $(function() {
     console.log("animating " + data[index]);
     main_scroller.animate({
       "top": "-=75px"
-    }, 800, subcats_here());
+    }, scroll_time, subcats_here());
   }
 
   // Display subcats?
@@ -70,35 +73,33 @@ $(function() {
     console.log('subcats');
     var subcats = subcat[data[index]];
 
-    console.log(subcats) ;
+    console.log(subcats);
 
     if (subcats != undefined) {
 
       // roll subcats, then proceed with main roll
-
-      //console.log("after cond " + subcats) ;
-
-      subcat_scroller.css("top", "");
-
-      subcat_scroller.text(subcats[subcat_index]);
+      subcat_scroller.css("top", "");    //reset to bottom
+      subcat_scroller.text(subcats[subcat_index]);   //set text
 
       subcat_scroller.animate({
           "top": "-=75px"
-        }, 800)
+        }, scroll_time)
         .animate({
-          fontSize: "+=0"
-        }, 1000)
+          "top": "+=0"    //hold
+        }, pause_time)
         .animate({
           "top": "-=75px"
-        }, 800, function() {
-          console.log('subcat animation done callback for subcat in ' +subcats + " "  + subcat_index);
-          main_scroller.css('visibility', 'hidden').css('top', '').css('visibility', 'visible');
+        }, scroll_time, function () {
+          console.log('subcat animation done callback for subcat in ' + subcats + " subcat index " + subcat_index);
+          subcat_scroller.css('visibility', 'hidden').css('top', '').css('visibility', 'visible');
 
           subcat_index++;
 
           if (subcat_index == subcats.length) {
             subcat_index = 0;
-            console.log('end of subcats');
+            console.log('end of subcats index is ' + subcat_index);
+            subcat_scroller.css("top", "");    //reset to bottom //todo roll off top
+
             finish_main_roll()
 
           } else {
@@ -110,6 +111,7 @@ $(function() {
         });
 
     } else {
+      console.log('No subcats to roll for ' + data[index]);
       finish_main_roll();
     }
   }
@@ -117,119 +119,24 @@ $(function() {
 
   function finish_main_roll() {
 
+    console.log('Finish main roll for ' + data[index]);
     main_scroller.animate({
         fontSize: "+=0"
-      }, 1000)
+      }, pause_time)
       .animate({
         "top": "-=75px"
-      }, 800, function() {
-        console.log('animation done callback');
+      }, scroll_time, function () {
+        console.log('main roll animation done callback, resetting to bottom');
         main_scroller.css('visibility', 'hidden').css('top', '').css('visibility', 'visible');
+
         index++;
+        console.log('Index is now ' + index)
+
+        if (index < data.length) {
+        rollup();
+        }
+
       });
-
-
-  }
-
-  function subcat_scroll(main_scroll_data) {
-
-    var subcats = subcat[data[index]];
-
-    if (subcats != undefined) {
-      console.log(data[index] + ' has subcats ' + subcats);
-
-      //scroll subcats
-
-      var subcat_span = $("#scroll_sub");
-
-
-      subcat_span.css('top', ""); //move to original position
-      animate(subcat_span);
-
-    }
-
-
-    //resume main scroll
-    index++
-    if (index == data.length) {
-      index = 0;
-    }
-    setTimeout(rollup, 2601);
-
   }
 
 });
-
-function reset(block) {
-
-  console.log('reset ');
-  block.css('backgroundColor', 'orange');
-  block.css('top', '158px');
-}
-/*
-
- $(function() {
-
- //this does not work because the default position of an element is static. Need to set the postion : absolute to make this work
- $(".block").animate({
- right: "+=50"
- }, 2000);
-
- // this works
- $('#p').animate({
- opacity: 0.25
- }, 3000);
-
- var data = ['AAA', 'BBB', 'CCC', "DDD", "EEE"];
-
- var go = true;
- var index = 0
-
- function cancel() {
- console.log('cancelling')
- clearInterval(looper);
- }
-
-
- var looper = setInterval(function() {
-
-
- console.log('interval')
-
- scroller = $('#scroll')
- scroller.text(data[index]);
-
- var offset = scroller.offset();
-
- var scrollerOriginLeft = offset.left;
- var scrollerOriginTop = offset.top;
-
- //scroll up
- //pause
- //scroll up
- //return to base position
-
- scroller.animate({
- "bottom": "+=50px"
- }, 1000)
- .animate({
- fontSize: "24px"
- }, 1000) //pause
- .animate({
- "bottom": "+=50px"
- }, 1000)
- .animate({
- 'left': scrollerOriginLeft,
- 'top': scrollerOriginTop
- }, 5);
-
- index++
- if (index == data.length) {
- cancel();
- }
-
- }, 3100);
-
-
- });
- */
