@@ -1,12 +1,12 @@
 
 $(function() {
 
-  var data = ['Code', 'Code', 'Code', 'Code'];
+  var data = ['Code', 'More Code', 'Code Code', 'c0de'];
   var subcat = {
-    'Java': [''],
-    'Android' : [''],
-    'Python' : ['Code', 'Code'],
-    'JavaScript': ['Code', 'Code Code']
+    'Code': [''],
+    'More Code' : [''],
+    'Code Code' : ['Code', 'Code'],
+    'c0de': ['Code', 'Code Code']
     // Provide list with blank string for items with no sub-categories
   };
 
