@@ -3,10 +3,10 @@ $(function() {
 
   var data = ['Code', 'More Code', 'Code Code', 'c0de'];
   var subcat = {
-    'Code': [''],
-    'More Code' : [''],
+    'Code': ['code', 'CODE'],
+    'More Code' : ['Code!', 'Code', 'Code code code'],
     'Code Code' : ['Code', 'Code'],
-    'c0de': ['Code', 'Code Code']
+    'c0de': ['Code', 'Code Code', 'Code code code']
     // Provide list with blank string for items with no sub-categories
   };
 
@@ -103,7 +103,7 @@ $(function() {
 
   function done() {
     main_scroller.css('top', '');  //reset
-    main_scroller.text('some other programming stuff');    // scroll in last line
+    main_scroller.text('code code code code code');    // scroll in last line
     main_scroller.animate({
       top: scroll_from_base
     }, pause_time);
